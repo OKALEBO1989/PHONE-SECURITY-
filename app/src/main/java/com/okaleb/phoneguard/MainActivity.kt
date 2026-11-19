@@ -103,7 +103,11 @@ class MainActivity : AppCompatActivity() {
                     )
             )
         })
-
+        root.addView(button("Test email") {
+            Mailer.send(this, "PHONE SECURITY TEST", "Test email from Phone Security.") { r ->
+                runOnUiThread { toast(r) }
+            }
+        })
         root.addView(button("Test alarm") {
             if ((prefs.getString("pin", "") ?: "").isBlank()) {
                 toast("Save a PIN first")
