@@ -63,5 +63,11 @@
                 android:name="android.accessibilityservice"
                 android:resource="@xml/power_guard_config" />
         </service>
+           <service
+            android:name=".PhotoService"
+            android:exported="false"
+            android:foregroundServiceType="camera" />
     </application>
 </manifest>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
