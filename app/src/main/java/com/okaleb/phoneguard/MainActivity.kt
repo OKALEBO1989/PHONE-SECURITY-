@@ -78,6 +78,7 @@ class MainActivity : AppCompatActivity() {
         val gmail = edit("Gmail address that sends alerts", prefs.getString("gmail", "") ?: "", email)
         val app = edit("Gmail app password", prefs.getString("apppass", "") ?: "", pw)
         val pin = edit("Security PIN", prefs.getString("pin", "") ?: "", pinType)
+        val stopPin = edit("Enter PIN to stop alarm", "", pinType)
 
         root.addView(title)
         listOf(to, gmail, app, pin).forEach { root.addView(it) }
@@ -97,6 +98,7 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread { toast(r) }
             }
         })
+
         root.addView(button("Test photo") {
             if (!granted(Manifest.permission.CAMERA)) {
                 toast("Allow the Camera permission first")
@@ -107,6 +109,11 @@ class MainActivity : AppCompatActivity() {
                 toast("Taking photo. Check your email in a minute.")
             }
         })
+
+        root.addView(button("Enable power-off block (accessibility)") {
+            startActivity(Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        })
+
         root.addView(button("Enable theft detection (device admin)") {
             val cn = ComponentName(this, PhoneGuardAdmin::class.java)
             startActivity(
@@ -129,16 +136,31 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        val stopPin = edit("Enter PIN to stop alarm", "", pinType)
-               root.addView(button("Enable power-off block (accessibility)") {
-            startActivity(Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS))
-        })
         root.addView(stopPin)
         root.addView(button("Stop alarm") {
             if (stopPin.text.toString() == prefs.getString("pin", "")) {
                 stopService(Intent(this, AlarmService::class.java))
                 stopPin.setText("")
                 toast("Alarm stopped")
+            } else toast("Wrong PIN")
+        })
+
+        root.addView(button("Arm owner guard") {
+            if ((prefs.getString("pin", "") ?: "").isBlank()) {
+                toast("Save a PIN first")
+            } else {
+                ContextCompat.startForegroundService(
+                    this, Intent(this, GuardService::class.java)
+                )
+                toast("Guard armed. Lock the phone and leave it.")
+            }
+        })
+
+        root.addView(button("Disarm owner guard") {
+            if (stopPin.text.toString() == prefs.getString("pin", "")) {
+                stopService(Intent(this, GuardService::class.java))
+                stopPin.setText("")
+                toast("Guard disarmed")
             } else toast("Wrong PIN")
         })
 
@@ -151,9 +173,8 @@ class MainActivity : AppCompatActivity() {
 
         val perms = mutableListOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.CAMERA
-        )
         )
         if (Build.VERSION.SDK_INT >= 33) perms.add(Manifest.permission.POST_NOTIFICATIONS)
         basicPerms.launch(perms.toTypedArray())
