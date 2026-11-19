@@ -97,7 +97,16 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread { toast(r) }
             }
         })
-
+        root.addView(button("Test photo") {
+            if (!granted(Manifest.permission.CAMERA)) {
+                toast("Allow the Camera permission first")
+            } else {
+                ContextCompat.startForegroundService(
+                    this, Intent(this, PhotoService::class.java)
+                )
+                toast("Taking photo. Check your email in a minute.")
+            }
+        })
         root.addView(button("Enable theft detection (device admin)") {
             val cn = ComponentName(this, PhoneGuardAdmin::class.java)
             startActivity(
@@ -142,7 +151,9 @@ class MainActivity : AppCompatActivity() {
 
         val perms = mutableListOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.CAMERA
+        )
         )
         if (Build.VERSION.SDK_INT >= 33) perms.add(Manifest.permission.POST_NOTIFICATIONS)
         basicPerms.launch(perms.toTypedArray())
