@@ -121,6 +121,9 @@ class MainActivity : AppCompatActivity() {
         })
 
         val stopPin = edit("Enter PIN to stop alarm", "", pinType)
+               root.addView(button("Enable power-off block (accessibility)") {
+            startActivity(Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        })
         root.addView(stopPin)
         root.addView(button("Stop alarm") {
             if (stopPin.text.toString() == prefs.getString("pin", "")) {
