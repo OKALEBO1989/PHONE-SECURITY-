@@ -1,0 +1,3 @@
+<resources>
+    <string name="power_guard_desc">Closes the power-off menu while the Phone Security alarm is ringing.</string>
+</resources>
