@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val title = TextView(this).apply {
-            text = "PHONE GUARD"
+            text = "PHONE SECURITY"
             textSize = 24f
         }
         val email = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
@@ -92,6 +92,12 @@ class MainActivity : AppCompatActivity() {
             toast("Saved")
         })
 
+        root.addView(button("Test email") {
+            Mailer.send(this, "PHONE SECURITY TEST", "Test email from Phone Security.") { r ->
+                runOnUiThread { toast(r) }
+            }
+        })
+
         root.addView(button("Enable theft detection (device admin)") {
             val cn = ComponentName(this, PhoneGuardAdmin::class.java)
             startActivity(
@@ -103,11 +109,7 @@ class MainActivity : AppCompatActivity() {
                     )
             )
         })
-        root.addView(button("Test email") {
-            Mailer.send(this, "PHONE SECURITY TEST", "Test email from Phone Security.") { r ->
-                runOnUiThread { toast(r) }
-            }
-        })
+
         root.addView(button("Test alarm") {
             if ((prefs.getString("pin", "") ?: "").isBlank()) {
                 toast("Save a PIN first")
