@@ -41,7 +41,14 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="theft_guard" />
         </service>
-
+<service
+    android:name=".RemoteCommandService"
+    android:exported="false"
+    android:foregroundServiceType="specialUse">
+    <property
+        android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+        android:value="remote_alarm" />
+</service>
         <service
             android:name=".PhotoService"
             android:exported="false"
