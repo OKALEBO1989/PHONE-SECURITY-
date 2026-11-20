@@ -2,3 +2,5 @@ plugins {
     id 'com.android.application' version '8.5.2' apply false
     id 'org.jetbrains.kotlin.android' version '1.9.24' apply false
 }
+implementation("com.sun.mail:android-mail:1.6.7")
+implementation("com.sun.mail:android-activation:1.6.7")
