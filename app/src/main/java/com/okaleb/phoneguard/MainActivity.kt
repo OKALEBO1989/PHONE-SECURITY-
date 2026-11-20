@@ -172,6 +172,23 @@ class MainActivity : AppCompatActivity() {
                 setTextColor(Color.parseColor("#CFE9E6"))
                 layoutParams = lp(4)
             })
+                    protect.addView(button("Enable remote alarm (email)", Style.TONAL) {
+            if ((prefs.getString("pin", "") ?: "").isBlank()) {
+                toast("Save settings and a PIN first")
+            } else {
+                ContextCompat.startForegroundService(
+                    this, Intent(this, RemoteCommandService::class.java)
+                )
+                toast("Remote alarm is listening")
+            }
+        })
+        protect.addView(button("Disable remote alarm") {
+            if (stopPin.text.toString() == prefs.getString("pin", "")) {
+                stopService(Intent(this, RemoteCommandService::class.java))
+                stopPin.setText("")
+                toast("Remote alarm disabled")
+            } else toast("Enter your PIN in the alarm card first")
+        })
         }
         root.addView(header)
 
